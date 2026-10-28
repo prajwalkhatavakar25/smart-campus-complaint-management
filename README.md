@@ -126,6 +126,7 @@ Screenshots of the running application will be added here.
 Suggested screenshots:
 
 * Login screen
+* 
 * Student complaint submission
 * Complaint list and status history
 * Administrator complaint assignment
@@ -151,3 +152,16 @@ Use demonstration data in screenshots. Do not publish real passwords, private co
 ---
 
 Developed as a Java Object-Oriented Programming mini-project.
+## Application Screenshots
+
+### Login Screen
+
+![Login Screen](docs/screenshots/login.png)
+
+### Student Dashboard
+
+![Student Dashboard](docs/screenshots/student-dashboard.png)
+
+### Complaint Submission Form
+
+![Complaint Submission Form](docs/screenshots/complaint-form.png)
