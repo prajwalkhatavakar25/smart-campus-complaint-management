@@ -1,0 +1,14 @@
+# Eclipse build and workspace files
+/bin/
+/.settings/
+*.class
+
+# Local database credentials (never commit)
+src/com/smartcampus/cms/util/DBConnection.java
+
+# Generated runtime output
+/reports/
+
+# Local environment files
+.env
+*.log
