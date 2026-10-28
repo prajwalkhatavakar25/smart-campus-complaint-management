@@ -1,14 +1,39 @@
-# Eclipse build and workspace files
+# Compiled Java files
+
 /bin/
-/.settings/
+/build/
+/target/
 *.class
 
-# Local database credentials (never commit)
-src/com/smartcampus/cms/util/DBConnection.java
+# Eclipse temporary files
 
-# Generated runtime output
-/reports/
+/.settings/
 
-# Local environment files
-.env
+# Other IDE files
+
+.idea/
+.vscode/
+
+# Operating system files
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+
 *.log
+*.tmp
+
+# Local secrets
+
+.env
+.env.*
+!.env.example
+
+# Database backups
+
+*.dump
+*.bak
+# Generated complaint reports
+/reports/
