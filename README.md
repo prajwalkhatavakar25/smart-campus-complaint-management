@@ -1,37 +1,153 @@
 # Smart Campus Complaint Management System
 
-A Java OOPJ mini project that helps students submit campus complaints, administrators assign them to staff, and staff update their progress.
+A Java-based campus complaint management application developed as an Object-Oriented Programming mini-project. It enables students to submit campus complaints, administrators to assign complaints to staff, and staff to update their progress.
 
 ## Features
 
-- Role-based authentication: Student, Admin, and Staff
-- Complaint submission, assignment, status updates, and history
-- JDBC-based MySQL persistence
-- Validation of complaint-status transitions
-- Background complaint report generation using `Runnable`
-- Console interface and an in-progress Java Swing interface
+* **Role-based authentication:** Separate student, staff, and administrator roles.
+* **Complaint submission:** Students can submit complaints about campus facilities.
+* **Complaint categorization:** Organize complaints by category and priority.
+* **Staff assignment:** Administrators can assign complaints to appropriate staff members.
+* **Status tracking:** Track complaint progress through different workflow stages.
+* **Complaint history:** Maintain a record of complaint status changes.
+* **MySQL integration:** Store and retrieve application data using JDBC.
+* **Report generation:** Generate complaint reports using Java threading.
+* **Multiple interfaces:** Includes a console interface and a Java Swing interface.
 
-## Requirements
+## Tech Stack
 
-- Java 21
-- MySQL Server
-- MySQL Connector/J
-- Eclipse IDE (recommended)
+| Technology     | Purpose                                 |
+| -------------- | --------------------------------------- |
+| Java 21        | Application development                 |
+| MySQL          | Database management                     |
+| JDBC           | Database connectivity                   |
+| Java Swing     | Graphical user interface                |
+| Eclipse IDE    | Development environment                 |
+| Git and GitHub | Version control and source-code hosting |
 
-## Database configuration
+## Project Structure
 
-For security, local database credentials are not included in this repository.
+```text
+SmartCampusComplaintManagement/
+├── src/
+│   └── com/smartcampus/cms/
+│       ├── dao/          # Database access objects
+│       ├── exception/    # Custom exceptions
+│       ├── model/        # Application models
+│       ├── service/      # Business logic
+│       ├── ui/           # Console and Swing interfaces
+│       ├── util/         # Database and utility classes
+│       ├── Main.java     # Console application entry point
+│       └── GuiMain.java  # Swing application entry point
+├── sql/
+│   └── smart_campus_cms_schema.sql
+├── .gitignore
+├── .classpath
+├── .project
+└── README.md
+```
 
-1. Copy `src/com/smartcampus/cms/util/DBConnection.java.example` to `DBConnection.java` in the same folder.
-2. Replace `YOUR_MYSQL_USERNAME` and `YOUR_MYSQL_PASSWORD` with your local MySQL credentials.
-3. Run `sql/smart_campus_cms_schema.sql` in MySQL.
-4. Add MySQL Connector/J to the Java build path.
-5. Run `com.smartcampus.cms.Main` for the console version or `com.smartcampus.cms.GuiMain` for the Swing login screen.
+## Prerequisites
 
-## Team
+Before running the application, install:
 
-- Prajwal Khatavakar — 1RUA25SCS0071
-- Sanjay M — 1RUA25SCS0089
-- Prajwal R — 1RUA25SCS0072
-- Prajwal J — 1RUA25SCS0070
-- Nithin L — 1RUA25SCS0065
+* Java Development Kit (JDK) 21
+* MySQL Server
+* MySQL Connector/J
+* Eclipse IDE or another compatible Java IDE
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/prajwalkhatavakar25/smart-campus-complaint-management.git
+```
+
+Import the downloaded project into Eclipse as an existing Java project.
+
+### 2. Create the database
+
+Open MySQL Workbench or your preferred MySQL client.
+
+Execute the SQL script:
+
+`sql/smart_campus_cms_schema.sql`
+
+The script creates the `smart_campus_cms` database, the required tables, and default complaint categories.
+
+### 3. Configure the database connection
+
+The current application configuration uses:
+
+* **Host:** `localhost`
+* **Port:** `3307`
+* **Database:** `smart_campus_cms`
+* **Username:** Your local MySQL username
+
+If your MySQL server uses another port, update the JDBC URL in `DBConnection.java`.
+
+The database password is read from the `DB_Password` environment variable.
+
+On Windows PowerShell, you can set this variable for the current terminal session:
+
+```powershell
+$env:DB_Password = "YOUR_LOCAL_MYSQL_PASSWORD"
+```
+
+Replace the placeholder with your own MySQL password. Never commit your actual password to GitHub.
+
+If you launch Eclipse separately, make sure Eclipse inherits the environment variable or configure it in the application's run configuration.
+
+### 4. Configure MySQL Connector/J
+
+Add the MySQL Connector/J JAR to your Eclipse project's Java Build Path.
+
+1. Right-click the project.
+2. Select **Build Path → Configure Build Path**.
+3. Open the **Libraries** tab.
+4. Select **Add External JARs**.
+5. Choose your MySQL Connector/J JAR.
+6. Apply the changes.
+
+### 5. Run the application
+
+After configuring the database and JDBC driver, run one of these classes:
+
+* `com.smartcampus.cms.Main` — Console application.
+* `com.smartcampus.cms.GuiMain` — Java Swing interface.
+
+Database-dependent features require a running MySQL server and correctly configured database credentials.
+
+## Application Screenshots
+
+Screenshots of the running application will be added here.
+
+Suggested screenshots:
+
+* Login screen
+* Student complaint submission
+* Complaint list and status history
+* Administrator complaint assignment
+* Staff complaint status updates
+
+Use demonstration data in screenshots. Do not publish real passwords, private complaint descriptions, or personal information.
+
+## Security Considerations
+
+* Keep database passwords and other credentials out of source code.
+* Do not upload generated reports containing personal or confidential information.
+* Use demonstration or anonymized data when showcasing the application.
+* Configure database credentials locally rather than committing them to the repository.
+
+## Future Enhancements
+
+* Improve authentication and password security.
+* Add automated tests.
+* Enhance complaint filtering and reporting.
+* Improve database configuration portability.
+* Expand the graphical interface.
+
+---
+
+Developed as a Java Object-Oriented Programming mini-project.
