@@ -1,6 +1,7 @@
 package com.smartcampus.cms.dao;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -11,6 +12,11 @@ import java.util.List;
 
 import com.smartcampus.cms.model.ComplaintStatus;
 import com.smartcampus.cms.util.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class ComplaintUpdateDAO {
 
@@ -91,5 +97,122 @@ public class ComplaintUpdateDAO {
         }
 
         return history;
+    }
+    public boolean updateStatusWithHistory(
+            int complaintId,
+            int staffId,
+            ComplaintStatus newStatus,
+            String updateMessage) {
+
+        String selectSql =
+                "SELECT status FROM complaints "
+                + "WHERE complaint_id = ? AND assigned_staff_id = ?";
+
+        String updateSql =
+                "UPDATE complaints SET status = ? "
+                + "WHERE complaint_id = ? AND assigned_staff_id = ?";
+
+        String historySql =
+                "INSERT INTO complaint_updates "
+                + "(complaint_id, updated_by, old_status, "
+                + "new_status, update_message) "
+                + "VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection connection = DBConnection.getConnection()) {
+
+            connection.setAutoCommit(false);
+
+            try {
+                ComplaintStatus oldStatus;
+
+                // Verify assignment and retrieve the current status.
+                try (PreparedStatement statement =
+                             connection.prepareStatement(selectSql)) {
+
+                    statement.setInt(1, complaintId);
+                    statement.setInt(2, staffId);
+
+                    try (ResultSet rs = statement.executeQuery()) {
+
+                        if (!rs.next()) {
+                            connection.rollback();
+                            return false;
+                        }
+
+                        oldStatus = ComplaintStatus.valueOf(
+                                rs.getString("status")
+                        );
+                    }
+                }
+
+                // Avoid recording an unnecessary status change.
+                if (oldStatus == newStatus) {
+                    connection.rollback();
+                    return false;
+                }
+
+                // Update the complaint.
+                try (PreparedStatement statement =
+                             connection.prepareStatement(updateSql)) {
+
+                    statement.setString(1, newStatus.name());
+                    statement.setInt(2, complaintId);
+                    statement.setInt(3, staffId);
+
+                    if (statement.executeUpdate() != 1) {
+                        connection.rollback();
+                        return false;
+                    }
+                }
+
+                // Record the status transition in the history table.
+                try (PreparedStatement statement =
+                             connection.prepareStatement(historySql)) {
+
+                    statement.setInt(1, complaintId);
+                    statement.setInt(2, staffId);
+                    statement.setString(3, oldStatus.name());
+                    statement.setString(4, newStatus.name());
+                    statement.setString(5, updateMessage);
+
+                    if (statement.executeUpdate() != 1) {
+                        connection.rollback();
+                        return false;
+                    }
+                }
+
+                connection.commit();
+                return true;
+
+            } catch (SQLException | RuntimeException e) {
+
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackException) {
+                    e.addSuppressed(rollbackException);
+                }
+
+                throw e;
+
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException e) {
+                    System.err.println(
+                            "Unable to restore auto-commit: "
+                                    + e.getMessage()
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "Unable to update complaint status: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.smartcampus.cms.ui;
 
 import java.awt.BorderLayout;
+
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,11 +20,24 @@ import javax.swing.JTextField;
 import com.smartcampus.cms.model.Priority;
 import com.smartcampus.cms.model.User;
 
+import java.util.List;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+
+import com.smartcampus.cms.dao.CategoryDAO;
+import com.smartcampus.cms.dao.ComplaintDAO;
+
+import com.smartcampus.cms.model.Category;
+import com.smartcampus.cms.model.Complaint;
+import com.smartcampus.cms.model.ComplaintStatus;
+import com.smartcampus.cms.model.Student;
+
 public class ComplaintSubmissionFrame extends JFrame {
 
     private final User student;
 
-    private final JComboBox<String> categoryBox;
+    private final JComboBox<Category> categoryBox;
     private final JTextField titleField;
     private final JTextArea descriptionArea;
     private final JTextField locationField;
@@ -53,15 +67,31 @@ public class ComplaintSubmissionFrame extends JFrame {
         constraints.gridy = 0;
         formPanel.add(new JLabel("Category:"), constraints);
 
-        categoryBox = new JComboBox<>(new String[] {
-                "Electrical",
-                "Plumbing",
-                "WiFi and Network",
-                "Classroom",
-                "Hostel",
-                "Sanitation",
-                "Security",
-                "Other"
+        List<Category> categories = new CategoryDAO().getAllCategories();
+
+        categoryBox = new JComboBox<>(
+                categories.toArray(new Category[0])
+        );
+
+        categoryBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(
+                    JList<?> list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
+
+                super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus
+                );
+
+                if (value instanceof Category) {
+                    setText(((Category) value).getCategoryName());
+                }
+
+                return this;
+            }
         });
         constraints.gridx = 1;
         formPanel.add(categoryBox, constraints);
@@ -125,6 +155,8 @@ public class ComplaintSubmissionFrame extends JFrame {
     }
 
     private void validateForm() {
+
+        // Validate required fields
         if (titleField.getText().trim().isEmpty()
                 || descriptionArea.getText().trim().isEmpty()
                 || locationField.getText().trim().isEmpty()) {
@@ -135,12 +167,78 @@ public class ComplaintSubmissionFrame extends JFrame {
                     "Validation Error",
                     JOptionPane.WARNING_MESSAGE
             );
+
             return;
         }
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Form validated successfully. Database submission will be connected next."
-        );
+        // Check category selection
+        Category selectedCategory =
+                (Category) categoryBox.getSelectedItem();
+
+        if (selectedCategory == null) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No category available. Please check your database.",
+                    "Category Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        // Verify the logged-in user is a Student
+        if (!(student instanceof Student)) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid student account.",
+                    "Authentication Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        // Create the complaint object
+        Complaint complaint = new Complaint();
+
+        complaint.setStudent((Student) student);
+        complaint.setCategory(selectedCategory);
+        complaint.setTitle(titleField.getText().trim());
+        complaint.setDescription(descriptionArea.getText().trim());
+        complaint.setLocation(locationField.getText().trim());
+        complaint.setPriority((Priority) priorityBox.getSelectedItem());
+        complaint.setStatus(ComplaintStatus.SUBMITTED);
+
+        // Save the complaint to MySQL
+        ComplaintDAO complaintDAO = new ComplaintDAO();
+
+        boolean success = complaintDAO.createComplaint(complaint);
+
+        if (success) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Complaint submitted successfully!\n"
+                            + "Complaint ID: " + complaint.getComplaintId(),
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            // Return to Student Dashboard
+            new StudentDashboardFrame(student).setVisible(true);
+            dispose();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Unable to submit complaint.\n"
+                            + "Please check your database connection and try again.",
+                    "Submission Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }

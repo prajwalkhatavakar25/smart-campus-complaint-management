@@ -1,3 +1,4 @@
+
 package com.smartcampus.cms.dao;
 
 import java.sql.Connection;
@@ -5,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.smartcampus.cms.model.Admin;
 import com.smartcampus.cms.model.Staff;
@@ -34,6 +37,7 @@ public class UserDAO {
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 1) {
+
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         user.setUserId(generatedKeys.getInt(1));
@@ -61,6 +65,7 @@ public class UserDAO {
             statement.setString(1, email);
 
             try (ResultSet resultSet = statement.executeQuery()) {
+
                 if (resultSet.next()) {
                     return mapUser(resultSet);
                 }
@@ -82,21 +87,50 @@ public class UserDAO {
         String department = resultSet.getString("department");
 
         UserRole role = UserRole.valueOf(
-                resultSet.getString("role")
-        );
+                resultSet.getString("role"));
 
         return switch (role) {
+
             case STUDENT -> new Student(
-                    userId, fullName, email, passwordHash, department
-            );
+                    userId, fullName, email, passwordHash, department);
 
             case STAFF -> new Staff(
-                    userId, fullName, email, passwordHash, department
-            );
+                    userId, fullName, email, passwordHash, department);
 
             case ADMIN -> new Admin(
-                    userId, fullName, email, passwordHash, department
-            );
+                    userId, fullName, email, passwordHash, department);
         };
+    }
+
+    public List<Staff> getAllStaff() {
+
+        List<Staff> staffList = new ArrayList<>();
+
+        String sql = "SELECT user_id, full_name, email, password_hash, "
+                + "role, department FROM users "
+                + "WHERE role = 'STAFF' "
+                + "ORDER BY full_name";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                Staff staff = new Staff(
+                        resultSet.getInt("user_id"),
+                        resultSet.getString("full_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password_hash"),
+                        resultSet.getString("department"));
+
+                staffList.add(staff);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Unable to fetch staff: " + e.getMessage());
+        }
+
+        return staffList;
     }
 }

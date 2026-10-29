@@ -1,6 +1,7 @@
 package com.smartcampus.cms.ui;
 
 import java.awt.BorderLayout;
+
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,6 +21,8 @@ import com.smartcampus.cms.exception.AuthenticationException;
 import com.smartcampus.cms.model.User;
 import com.smartcampus.cms.service.AuthenticationService;
 import com.smartcampus.cms.model.Student;
+import com.smartcampus.cms.model.Staff;
+import com.smartcampus.cms.model.Admin;
 
 public class LoginFrame extends JFrame {
 
@@ -89,6 +92,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void login(ActionEvent event) {
+
         String email = emailField.getText().trim();
         String password = new String(passwordField.getPassword());
 
@@ -103,25 +107,46 @@ public class LoginFrame extends JFrame {
         }
 
         try {
-            User loggedInUser = authenticationService.login(email, password);
+
+            User loggedInUser =
+                    authenticationService.login(email, password);
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Login successful! Welcome, " + loggedInUser.getFullName()
+                    "Login successful! Welcome, "
+                            + loggedInUser.getFullName()
             );
 
-            // Dashboard windows will be added next.
+            // Navigate according to the user's role.
             if (loggedInUser instanceof Student) {
+
                 new StudentDashboardFrame(loggedInUser).setVisible(true);
                 dispose();
+
+            } else if (loggedInUser instanceof Staff) {
+
+                new StaffDashboardFrame((Staff) loggedInUser)
+                        .setVisible(true);
+                dispose();
+
+            } else if (loggedInUser instanceof Admin) {
+
+                new AdminDashboardFrame((Admin) loggedInUser)
+                        .setVisible(true);
+                dispose();
+
             } else {
+
                 JOptionPane.showMessageDialog(
                         this,
-                        "Student Dashboard is currently available."
+                        "No dashboard is available for this account.",
+                        "Dashboard Unavailable",
+                        JOptionPane.WARNING_MESSAGE
                 );
             }
 
         } catch (AuthenticationException exception) {
+
             JOptionPane.showMessageDialog(
                     this,
                     exception.getMessage(),

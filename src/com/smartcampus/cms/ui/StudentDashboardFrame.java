@@ -47,15 +47,15 @@ public class StudentDashboardFrame extends JFrame {
             dispose();
         });
 
-        viewButton.addActionListener(event ->
-                JOptionPane.showMessageDialog(this,
-                        "Complaint list will be added next.")
-        );
+        viewButton.addActionListener(event -> {
+            new MyComplaintsFrame(student).setVisible(true);
+            dispose();
+        });
 
-        historyButton.addActionListener(event ->
-                JOptionPane.showMessageDialog(this,
-                        "Complaint history screen will be added later.")
-        );
+        historyButton.addActionListener(event -> {
+            new ComplaintHistoryFrame(student).setVisible(true);
+            dispose();
+        });
 
         logoutButton.addActionListener(event -> {
             new LoginFrame().setVisible(true);

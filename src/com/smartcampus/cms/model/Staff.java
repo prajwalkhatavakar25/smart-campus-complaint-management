@@ -1,3 +1,4 @@
+
 package com.smartcampus.cms.model;
 
 public class Staff extends User {
@@ -16,5 +17,10 @@ public class Staff extends User {
     @Override
     public String getRoleDescription() {
         return "Staff: can work on assigned complaints.";
+    }
+
+    @Override
+    public String toString() {
+        return getFullName() + " (ID: " + getUserId() + ")";
     }
 }
