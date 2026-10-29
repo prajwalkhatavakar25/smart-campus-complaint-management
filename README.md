@@ -176,8 +176,6 @@ Database-dependent features require a running MySQL server and correctly configu
 
 ## Application Screenshots
 
-Screenshots can be stored in the repository's `docs/screenshot/` directory.
-
 ### Login Screen
 
 ![Login Screen](docs/screenshot/login.png)
@@ -192,43 +190,24 @@ Screenshots can be stored in the repository's `docs/screenshot/` directory.
 
 ### Admin Dashboard
 
-Add a screenshot of the administrator dashboard.
-
-Suggested filename:
-
-`docs/screenshot/Admin_Dashboard.png`
+![Admin Dashboard](docs/screenshot/Admin_Dashboard.png)
 
 ### All Student Complaints
 
-Add a screenshot showing the administrator's complaint table.
-
-Suggested filename:
-
-`docs/screenshot/Admin_Complaints.png`
+![All Student Complaints](docs/screenshot/Admin_Complaints.png)
 
 ### Assign Complaints to Staff
 
-Add a screenshot showing the complaint assignment table and staff selection dropdown.
-
-Suggested filename:
-
-`docs/screenshot/Assign_Complaints.png`
+![Assign Complaints to Staff](docs/screenshot/Assign_Complaints.png)
 
 ### Staff Dashboard
 
-Add a screenshot of the staff dashboard.
-
-Suggested filename:
-
-`docs/screenshot/Staff_Dashboard.png`
+![Staff Dashboard](docs/screenshot/Staff_Dashboard.png)
 
 ### Staff Complaint Management
 
-Add a screenshot showing the assigned complaints and status-update interface.
+![Staff Complaint Management](docs/screenshot/Staff_Complaints.png)
 
-Suggested filename:
-
-`docs/screenshot/Staff_Complaints.png`
 
 Use demonstration data in screenshots. Do not publish real passwords, private complaint descriptions, or personal information.
 
